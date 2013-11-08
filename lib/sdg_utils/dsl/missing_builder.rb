@@ -1,5 +1,3 @@
-require 'alloy/ast/types'
-
 require 'sdg_utils/dsl/base_builder'
 require 'sdg_utils/proxy'
 
@@ -132,17 +130,17 @@ module SDGUtils
       #--------------------------------------------------------
       def to_sym() @name end
 
-      #--------------------------------------------------------
-      # Converts self to +Alloy::Ast::UnaryType+ and then delegates
-      # the +*+ operation to it.
-      #
-      # @see Alloy::Ast::AType
-      # @see Alloy::Ast::UnaryType
-      # @see Alloy::Ast::ProductType
-      #--------------------------------------------------------
-      def *(rhs)
-        ::Alloy::Ast::UnaryType.new(self) * rhs
-      end
+      # #--------------------------------------------------------
+      # # Converts self to +Alloy::Ast::UnaryType+ and then delegates
+      # # the +*+ operation to it.
+      # #
+      # # @see Alloy::Ast::AType
+      # # @see Alloy::Ast::UnaryType
+      # # @see Alloy::Ast::ProductType
+      # #--------------------------------------------------------
+      # def *(rhs)
+      #   ::Alloy::Ast::UnaryType.new(self) * rhs
+      # end
 
       private
 
