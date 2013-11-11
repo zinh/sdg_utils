@@ -53,11 +53,7 @@ module SDGUtils
       end
 
       def build(*args, &body)
-        BaseBuilder.push_ctx(self)
-        @in_builder = true
-        @missing_builders = []
-
-        begin
+        do_in_builder do
           @result = case
           # if the argument is a builder, that means that the object has already
           # been built, so now only evaluate the body (if given)
@@ -76,10 +72,6 @@ module SDGUtils
           fail_if_missing_methods
 
           return_result
-        ensure
-          @in_builder = false
-          @missing_builders = []
-          BaseBuilder.pop_ctx
         end
       end
 
@@ -94,7 +86,26 @@ module SDGUtils
         return_result
       end
 
+      def eval_body_now!
+        return unless @body_eval_proc
+        BaseBuilder.push_ctx(@module_builder)
+        do_in_builder{ @body_eval_proc.call() }
+      ensure
+        BaseBuilder.pop_ctx
+      end
+
       protected
+
+      def do_in_builder
+        BaseBuilder.push_ctx(self)
+        @in_builder = true
+        @missing_builders = []
+        yield
+      ensure
+        @in_builder = false
+        @missing_builders = []
+        BaseBuilder.pop_ctx
+      end
 
       def raise_illegal_modifier(obj, modifier)
         raise SyntaxError, "Modifier `#{modifier}' is illegal for #{obj}:#{obj.class}"
@@ -123,6 +134,8 @@ module SDGUtils
       #
       #   :finish_method   [Symbol] - callback method to call upon finishing
       #
+      #   :defer_body_eval [Bool]   - defer body eval until explicitly told to do so
+      #
       #   :create_const    [Bool]   - whether to assign a constant to the created
       #                               class/module
       #
@@ -140,6 +153,7 @@ module SDGUtils
           :eval_body_mthd   => :__eval_body,
           :body_evald_mthd  => :__body_evaluated,
           :finish_mthd      => :__finish,
+          :defer_body_eval  => false,
           :create_const     => true,
           :return           => :as_is
         }).extend(options)
@@ -149,16 +163,23 @@ module SDGUtils
 
       def eval_body(obj, default_eval_mthd=:class_eval, &body)
         return unless body
-        # body_src = SDGUtils::Lambda::Sourcerer.proc_to_src(body) rescue nil
-
-        ebm = @conf.eval_body_mthd
-        eval_body_mthd_name = obj.respond_to?(ebm) ? ebm : default_eval_mthd
-        begin
-          @in_body = true
-          obj.send eval_body_mthd_name, &body
-          safe_send obj, @conf.body_evald_mthd
-        ensure
-          @in_body = false
+        body_eval_proc = proc {
+          # body_src = SDGUtils::Lambda::Sourcerer.proc_to_src(body) rescue nil
+          ebm = @conf.eval_body_mthd
+          eval_body_mthd_name = obj.respond_to?(ebm) ? ebm : default_eval_mthd
+          begin
+            @in_body = true
+            obj.send eval_body_mthd_name, &body
+            safe_send obj, @conf.body_evald_mthd
+          ensure
+            @in_body = false
+          end
+        }
+        if @conf.defer_body_eval
+          @module_builder = ModuleBuilder.get
+          @body_eval_proc = body_eval_proc
+        else
+          body_eval_proc.call()
         end
       end
 

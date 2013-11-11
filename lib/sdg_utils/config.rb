@@ -38,6 +38,14 @@ module SDGUtils
       @parent_config
     end
 
+    def do_with(hash)
+      @old_opts = @opts
+      @opts = @opts.merge(hash)
+      yield
+    ensure
+      @opts = @old_opts
+    end
+
     def _init(parent_config, defaults={})
       @parent_config = parent_config
       @opts = {}

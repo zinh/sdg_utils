@@ -119,12 +119,7 @@ module SDGUtils
         safe_send @cls, @conf.params_mthd, params
 
         # evaluate body
-        if body
-          ret = eval_body @cls, :class_eval, &body
-          # if !ret.nil? && ret.kind_of?(Hash)
-          #   safe_send @cls, @conf.params_mthd, ret
-          # end
-        end
+        ret = eval_body @cls, :class_eval, &body
 
         return @cls
       end
