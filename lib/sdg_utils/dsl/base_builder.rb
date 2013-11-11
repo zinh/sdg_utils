@@ -66,10 +66,7 @@ module SDGUtils
             do_build(*args, &body)
           end
           # send :finish
-          return_result(:array).each{|obj| safe_send obj, @conf.finish_mthd}
-
-          # check missing builders
-          fail_if_missing_methods
+          call_finish_if_done
 
           return_result
         end
@@ -90,6 +87,9 @@ module SDGUtils
         return unless @body_eval_proc
         BaseBuilder.push_ctx(@module_builder)
         do_in_builder{ @body_eval_proc.call() }
+        @body_eval_proc = nil
+        call_finish_if_done
+        return_result
       ensure
         BaseBuilder.pop_ctx
       end
@@ -105,6 +105,16 @@ module SDGUtils
         @in_builder = false
         @missing_builders = []
         BaseBuilder.pop_ctx
+      end
+
+      def body_eval_pending?() @body_eval_proc end
+
+      def call_finish_if_done
+        unless body_eval_pending?
+          return_result(:array).each{|obj| safe_send obj, @conf.finish_mthd}
+        end
+        # check missing builders
+        fail_if_missing_methods
       end
 
       def raise_illegal_modifier(obj, modifier)
