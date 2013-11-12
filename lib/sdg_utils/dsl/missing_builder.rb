@@ -105,6 +105,15 @@ module SDGUtils
         self
       end
 
+      def |(*args)
+        if args.size == 1 && args[0].is_a?(Array)
+          self[*args[0]]
+        else
+          ::Kernel.raise ::SDGUtils::DSL::SyntaxError, "the | method takes one array"
+        end
+        self
+      end
+
       def ==(other)
         if ::SDGUtils::DSL::MissingBuilder === other
           @name == other.name
