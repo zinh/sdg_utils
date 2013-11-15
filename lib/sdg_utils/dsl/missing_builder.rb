@@ -54,6 +54,7 @@ module SDGUtils
       def past_args?()   in_ret_type? end
       def has_body?()    !!@body end
       def remove_body()  b = @body; @body = nil; b end
+      def super=(s)      self < s end
       def set_body(&block)
         msg = "Not allowed to change +MissingBuilder+'s body"
         ::Kernel.raise ::SDGUtils::DSL::SyntaxError, msg if has_body?

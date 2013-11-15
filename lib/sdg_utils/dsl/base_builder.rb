@@ -55,16 +55,17 @@ module SDGUtils
       def build(*args, &body)
         do_in_builder do
           @result = case
-          # if the argument is a builder, that means that the object has already
-          # been built, so now only evaluate the body (if given)
-          when args.size == 1 && BaseBuilder === args.first
-            bb = args.first
-            bb.return_result(:array).each{|obj| eval_body(obj, &body) }
-            bb.result()
-          else
-            @result = nil
-            do_build(*args, &body)
-          end
+                      # if the argument is a builder, that means that
+                      # the object has already been built, so now only
+                      # evaluate the body (if given)
+                    when args.size == 1 && BaseBuilder === args.first
+                      bb = args.first
+                      bb.return_result(:array).each{|obj| eval_body(obj, &body) }
+                      bb.result()
+                    else
+                      @result = nil
+                      do_build(*args, &body)
+                    end
           # send :finish
           call_finish_if_done
 

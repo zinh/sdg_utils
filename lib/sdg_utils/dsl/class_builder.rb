@@ -39,7 +39,12 @@ module SDGUtils
       def do_build(*args, &body)
         case
         when body.nil? && args.all?{|a| a.respond_to? :to_sym}
-          args.map(&method(:do_build1))
+          super_cls = args.last.super rescue nil
+          args.map do |arg|
+            mb = (MissingBuilder === arg) ? arg : MissingBuilder.new(arg.to_sym)
+            mb.super ||= super_cls
+            do_build1(mb)
+          end
         else
           do_build1(*args, &body)
         end
