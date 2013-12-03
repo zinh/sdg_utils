@@ -2,6 +2,16 @@ module SDGUtils
   module Testing
 
     module Assertions
+      def squish(str)
+        str.gsub(/\s+/, ' ').strip
+      end
+
+      def assert_equal_ignore_whitespace(str1, str2, msg="")
+        str1 = str1.to_s
+        str2 = str2.to_s
+        assert_equal squish(str1), squish(str2), msg
+      end
+
       def assert_arry_equal(arry1, arry2, msg="")
         mymsg = "Arrays arry1=#{arry1} and arry2=#{arry2} are not equal"
         mymsg = "#{msg}\n#{mymsg}" unless mymsg.empty?
