@@ -128,7 +128,6 @@ module SDGUtils
             RUBY
           end
         end
-
       end
 
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -143,6 +142,13 @@ module SDGUtils
         arr = cls.instance_variable_get("@searchable_attrs") || []
         arr.each do |attr|
           instance_variable_set "@#{attr}", []
+        end
+      end
+
+      def _clear_caches(*whats)
+        whats.each do |w|
+          instance_variable_set "@#{w}_cache", nil
+          instance_variable_set "@#{w}_fnd_cache", nil
         end
       end
 
