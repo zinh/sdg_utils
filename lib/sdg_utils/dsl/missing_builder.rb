@@ -145,15 +145,20 @@ module SDGUtils
       def notype() @notype ||= ::Alloy::Ast::NoType.new end
 
       def to_args_hash(args)
-        case
-        when args.size == 1 && ::Hash === args[0]
-          args[0]
+        if args.size == 1
+          args.first
         else
-          # treat as a list of arg names
-          args.reduce({}) do |acc, arg_name|
-            acc.merge!({arg_name => notype})
-          end
+          args
         end
+        # case
+        # when args.size == 1 && ::Hash === args[0]
+        #   args[0]
+        # else
+        #   # treat as a list of arg names
+        #   args.reduce({}) do |acc, arg_name|
+        #     acc.merge!({arg_name => notype})
+        #   end
+        # end
       end
 
     end
