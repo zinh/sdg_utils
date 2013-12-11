@@ -17,7 +17,7 @@ module SDGUtils
         # first try to find in the current module
         begin
           mod = model_mgr.scope_module
-          if mod.const_defined?(sym, false)
+          if mod.const_defined?(sym, true)
             mod.const_get(sym)
           else
             MissingBuilder.new sym
