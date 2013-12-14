@@ -1,3 +1,5 @@
+require 'set'
+
 module SDGUtils
   module Testing
 
@@ -33,7 +35,7 @@ module SDGUtils
 
       def assert_set_equal(set1, set2, msg="")
         mymsg = "Sets set1=#{set1} and set2=#{set2} are not equal"
-        mymsg = "#{msg}\n#{mymsg}" unless mymsg.empty?
+        mymsg = "#{msg}\n#{mymsg}" unless msg.empty?
         if set1.nil?
           assert_nil set2, mymsg + ": set1 is nil set2 is not."
           return
