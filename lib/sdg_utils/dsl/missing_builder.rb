@@ -142,7 +142,8 @@ module SDGUtils
 
       private
 
-      def notype() @notype ||= ::Alloy::Ast::NoType.new end
+      # TODO: must not have refs to Arby
+      def notype() @notype ||= ::Arby::Ast::NoType.new end
 
       def to_args_hash(args)
         if args.size == 1

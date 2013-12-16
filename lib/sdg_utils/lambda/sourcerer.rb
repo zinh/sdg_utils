@@ -54,6 +54,7 @@ module SDGUtils
 
       def parse_proc_string(str)
         ast = parse_string(str)
+        return nil unless ast
         block = extract_block(ast)
         extract_block_body(block)
       end
