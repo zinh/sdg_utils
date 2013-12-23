@@ -66,11 +66,11 @@ module SDGUtils
                       @result = nil
                       do_build(*args, &body)
                     end
-          # send :finish
-          call_finish_if_done
-
-          return_result
         end
+        # send :finish
+        call_finish_if_done
+
+        return_result
       end
 
       def apply_modifier(modifier, expected_cls=nil, *args, &block)
