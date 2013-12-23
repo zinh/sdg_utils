@@ -14,7 +14,8 @@ module SDGUtils
           obj = @target.call() if ::Proc === @target && @target.arity == 0
           obj.send(name, *a, &b)
         end
-        (class << self; self end).send :define_method, name, handler
+        cls = class << self; self end
+        cls.send :define_method, name, handler unless cls.frozen?
         handler.call(*args, &block)
       end
     end
