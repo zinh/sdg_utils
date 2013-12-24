@@ -12,6 +12,7 @@ module SDGUtils
         handler = ::Proc.new do |*a, &b|
           obj = @target
           obj = @target.call() if ::Proc === @target && @target.arity == 0
+          binding.pry if $pera
           obj.send(name, *a, &b)
         end
         cls = class << self; self end
