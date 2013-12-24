@@ -26,6 +26,26 @@ module SDGUtils
   # Usage: extend your class with this module.
   module Delegate
     def delegate(*args)
+      mod = _synth_mod(*args)
+      if Module === self
+        self.send :extend, mod
+      else
+        (class << self; self end).send :include, mod
+      end
+    end
+
+    def idelegate(*args)
+      cls = (Module === self) ? self : (class << self; self end)
+      cls.send :include, _synth_mod(*args)
+    end
+
+    def delegate_all(cls, hash)
+      delegate(*cls.instance_methods(false), hash)
+    end
+
+    private
+
+    def _synth_mod(*args)
       hash = args.last
       fail "Last arg must be hash" unless Hash === hash
       target = hash[:to]
@@ -36,21 +56,13 @@ module SDGUtils
       args[0..-2].each do |sym|
         sym = sym.to_sym
         proc = if is_proc
-          lambda { |*xxx, &block| target.call().send(sym, *xxx, &block) }
+          lambda{|*xxx, &block| target.call().send(sym, *xxx, &block)}
         else
-          lambda { |*xxx, &block| target.send(sym, *xxx, &block) }
+          lambda{|*xxx, &block| target.send(sym, *xxx, &block)}
         end
         mod.send :define_method, sym, proc
       end
-      if Module === self
-        self.send :extend, mod
-      else
-        (class << self; self end).send :include, mod
-      end
-    end
-
-    def delegate_all(cls, hash)
-      delegate(*cls.instance_methods(false), hash)
+      mod
     end
   end
 
