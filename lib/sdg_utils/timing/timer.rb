@@ -1,3 +1,4 @@
+require 'benchmark'
 require 'sdg_utils/print_utils/tree_printer.rb'
 
 module SDGUtils
@@ -14,6 +15,7 @@ module SDGUtils
           @parent = parent
           @children = []
           @props = props
+          @last_node = nil
           parent.children << self if parent
         end
 
@@ -48,9 +50,11 @@ module SDGUtils
           node.time = Benchmark.realtime{ans = yield}
           ans
         ensure
-          @stack.pop
+          @last_node = @stack.pop
         end
       end
+
+      def last_time() @last_node and @last_node.time end
 
       def print
         @tree_printer.print_tree(@root)
