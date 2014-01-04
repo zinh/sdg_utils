@@ -49,7 +49,15 @@ module SDGUtils
       end
 
       def parse_string(str)
-        Parser::CurrentRuby.parse(str)
+        parser = Parser::CurrentRuby.new
+        parser.diagnostics.consumer = lambda{ |diag| 
+          send :on_parse_error, diag if respond_to?(:on_parse_error)
+        }
+
+        buffer = Parser::Source::Buffer.new('(string)')
+        buffer.source = str
+
+        parser.parse(buffer)
       end
 
       def parse_proc_string(str)
