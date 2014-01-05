@@ -77,10 +77,10 @@ module SDGUtils
       # values of its attributes with attribute values in +self+.
       def <(super_thing)
         @super = super_thing
-        if MissingBuilder === super_thing && super_thing.body
+        if MissingBuilder === super_thing #&& super_thing.body
           @super = eval super_thing.name.to_s
           @args.merge! super_thing.args
-          @body = super_thing.body
+          @body = super_thing.body if super_thing.body
           super_thing.consume
         end
         self
