@@ -69,13 +69,19 @@ module SDGUtils
         full_backtrace
       end
 
+      def cause_backtrace
+        if @cause
+          ["", "Caused by #{@cause.class}: #{@cause.message}"] +
+          @cause.backtrace.map{|e| @@tab + e}
+        else
+          []
+        end
+      end
+
       def full_backtrace
         ret = ["#{self.class}"]
         ret += @backtrace || []
-        if @cause != nil
-          ret += ["", "Caused by #{@cause.class}: #{@cause.message}"]
-          ret += @cause.backtrace.map{|e| @@tab + e}
-        end
+        ret += cause_backtrace
         ret
       end
 

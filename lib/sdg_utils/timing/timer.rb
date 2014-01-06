@@ -41,7 +41,7 @@ module SDGUtils
         [ans]
       end
 
-      def time_it(task, task_param=nil, &block)
+      def time_it(task="<unspecified>", task_param=nil, &block)
         parent = @stack.last || @root
         node = Node.new(task, task_param, parent)
         begin
